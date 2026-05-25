@@ -1,0 +1,33 @@
+name: Organic Green Graph
+
+on:
+  schedule:
+    - cron: '30 15 * * *' # Runs once every day (at 15:30 UTC)
+  workflow_dispatch: # Allows you to manually trigger it anytime
+
+jobs:
+  paint-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Make Random Number of Commits
+        run: |
+          # Configure Git
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          
+          # Pick a random number between 1 and 7 for commit depth/shade
+          NUM_COMMITS=$(( ( RANDOM % 7 ) + 1 ))
+          echo "Generating $NUM_COMMITS commits today for shade variety!"
+          
+          # Loop to create the variations
+          for i in $(seq 1 $NUM_COMMITS); do
+            echo "Commit activity loop $i on $(date)" >> activity_log.txt
+            git add activity_log.txt
+            git commit -m "Organic contribution patch $i"
+          done
+          
+          # Push the changes back to GitHub
+          git push
